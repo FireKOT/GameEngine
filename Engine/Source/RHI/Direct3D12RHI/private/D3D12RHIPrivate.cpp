@@ -6,6 +6,36 @@
 #include <Math/Vector.h>
 #include <Math/Matrix.h>
 
+
+namespace {
+
+	using namespace GameEngine;
+	using namespace Core;
+
+	Math::Matrix4x4f GetRotationMatrix(Math::Vector3f axis, float angle)
+	{
+		float cos = std::cos(angle);
+		float sin = std::sin(angle);
+
+		Math::Matrix4x4f rotationMatrix = Math::Matrix4x4f::Identity();
+
+		rotationMatrix.SetElement(cos + axis.x * axis.x * (1 - cos), 0, 0);
+		rotationMatrix.SetElement(axis.x * axis.y * (1 - cos) - axis.z * sin, 0, 1);
+		rotationMatrix.SetElement(axis.x * axis.y * (1 - cos) + axis.y * sin, 0, 2);
+
+		rotationMatrix.SetElement(axis.x * axis.y * (1 - cos) + axis.z * sin, 1, 0);
+		rotationMatrix.SetElement(cos + axis.y * axis.y * (1 - cos), 1, 1);
+		rotationMatrix.SetElement(axis.y * axis.z * (1 - cos) - axis.x * sin, 1, 2);
+
+		rotationMatrix.SetElement(axis.x * axis.z * (1 - cos) - axis.y * sin, 2, 0);
+		rotationMatrix.SetElement(axis.y * axis.z * (1 - cos) + axis.x * sin, 2, 1);
+		rotationMatrix.SetElement(cos + axis.z * axis.z * (1 - cos), 2, 2);
+
+		return rotationMatrix;
+	}
+}
+
+
 namespace GameEngine
 {
 	namespace Render::HAL
@@ -272,6 +302,20 @@ namespace GameEngine
 			Math::Matrix4x4f proj = Core::Math::ProjectionMatrixLH(0.25f * DirectX::XM_PI, Core::MainWindowsApplication->GetAspectRatio(), 1.0f, 1000.0f);
 
 			Math::Matrix4x4f world = Math::Matrix4x4f::Identity();
+
+
+			static float angle = 0.f;
+			angle += 0.01f;
+
+			if (angle > DirectX::XM_2PI) {			//shitty solution but I'm lazy to wright normal
+
+				angle -= DirectX::XM_2PI;
+			}
+
+			world = world * GetRotationMatrix(Math::Vector3f(1.0f, 0.0f, 1.0f), angle);		//rotate
+
+			world.SetElement(sinf(angle), 3, 0);		//move
+			
 			Math::Matrix4x4f worldViewProj = world * view * proj;
 
 			ObjectConstants objConstants;

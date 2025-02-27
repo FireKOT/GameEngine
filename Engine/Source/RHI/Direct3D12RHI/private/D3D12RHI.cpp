@@ -1,4 +1,5 @@
 #include <array.h>
+#include <vector>
 #include <D3D12Mesh.h>
 #include <D3D12RHI.h>
 #include <D3D12RHIPrivate.h>
@@ -66,6 +67,47 @@ namespace GameEngine
 				// bottom face
 				4, 0, 3,
 				4, 3, 7
+			};
+
+			return m_d3d12Private->CreateMesh(vertices.begin(), vertices.size(), sizeof(Vertex), indices.begin(), indices.size(), sizeof(uint16_t));
+		}
+
+		Mesh::Ptr D3D12RHI::CreateSandClockMesh()
+		{
+			array<Vertex, 9> vertices =
+			{
+				Vertex({ Math::Vector3f(0.f, 0.f, 0.f), Math::Vector4f((float*)&DirectX::Colors::White) }),
+
+				Vertex({ Math::Vector3f(-1.f, 1.f,  1.f), Math::Vector4f((float*)&DirectX::Colors::Black) }),
+				Vertex({ Math::Vector3f( 1.f, 1.f,  1.f), Math::Vector4f((float*)&DirectX::Colors::Red) }),
+				Vertex({ Math::Vector3f( 1.f, 1.f, -1.f), Math::Vector4f((float*)&DirectX::Colors::Green) }),
+				Vertex({ Math::Vector3f(-1.f, 1.f, -1.f), Math::Vector4f((float*)&DirectX::Colors::Blue) }),
+
+				Vertex({ Math::Vector3f(-1.f, -1.f,  1.f), Math::Vector4f((float*)&DirectX::Colors::Yellow) }),
+				Vertex({ Math::Vector3f( 1.f, -1.f,  1.f), Math::Vector4f((float*)&DirectX::Colors::Cyan) }),
+				Vertex({ Math::Vector3f( 1.f, -1.f, -1.f), Math::Vector4f((float*)&DirectX::Colors::Magenta) }),
+				Vertex({ Math::Vector3f(-1.f, -1.f, -1.f), Math::Vector4f((float*)&DirectX::Colors::Azure) })
+			};
+
+			array<uint16_t, 36> indices =
+			{
+				// upper face
+				1, 3, 4,
+				1, 2, 3,
+
+				// lower face
+				5, 8, 7,
+				5, 7, 6,
+
+				4, 3, 0,
+				3, 2, 0,
+				2, 1, 0,
+				1, 4, 0,
+
+				7, 8, 0,
+				6, 7, 0,
+				5, 6, 0,
+				8, 5, 0
 			};
 
 			return m_d3d12Private->CreateMesh(vertices.begin(), vertices.size(), sizeof(Vertex), indices.begin(), indices.size(), sizeof(uint16_t));

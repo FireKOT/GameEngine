@@ -67,6 +67,15 @@ namespace GameEngine::Core
 				return result;
 			}
 
+			inline Vector3<T> operator+(Vector3<T> other) {
+
+				Vector3<T> result;
+				result.x = x + other.x;
+				result.y = y + other.y;
+				result.z = z + other.z;
+				return result;
+			}
+
 			inline float operator*(Vector3<T> other)
 			{
 				return x * other.x + y * other.y + z * other.z;
