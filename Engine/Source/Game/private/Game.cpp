@@ -1,7 +1,20 @@
 #include <Camera.h>
+#include <iostream>
 #include <DefaultGeometry.h>
 #include <Game.h>
 #include <GameObject.h>
+#include <INIReader.h>
+#include <windows.h>
+
+
+namespace {
+
+	bool isKeyPressed(int keyCode) {
+
+		return GetAsyncKeyState(keyCode) & (1 << (sizeof(short) - 1));
+	}
+}
+
 
 namespace GameEngine
 {
@@ -22,6 +35,20 @@ namespace GameEngine
 			m_Objects.push_back(new GameObject());
 			Render::RenderObject** renderObject = m_Objects.back()->GetRenderObjectRef();
 			m_renderThread->EnqueueCommand(Render::ERC::CreateRenderObject, RenderCore::DefaultGeometry::Cube(), renderObject);
+		}
+
+		//key binds
+		Core::INIReader reader("controls.ini");
+		if (reader.ParseError() < 0) {
+
+			std::cout << "Can't load \"controls.ini\"\n";
+		}
+		else {
+
+			moveForewardKey_ = reader.GetInteger("controls", "MoveForeward", 87);
+			moveBackwardKey_ = reader.GetInteger("controls", "MoveBackward", 83);
+			moveLeftKey_     = reader.GetInteger("controls", "MoveLeft",     65);
+			moveRighKey_     = reader.GetInteger("controls", "MoveRight",    68);
 		}
 	}
 
@@ -48,25 +75,46 @@ namespace GameEngine
 
 	void Game::Update(float dt)
 	{
-		for (int i = 0; i < m_Objects.size(); ++i)
-		{
-			Math::Vector3f pos = m_Objects[i]->GetPosition();
+		//for (int i = 0; i < m_Objects.size(); ++i)
+		//{
+		//	Math::Vector3f pos = m_Objects[i]->GetPosition();
 
-			// Showcase
-			if (i == 0)
-			{
-				pos.x += 0.5f * dt;
-			}
-			else if (i == 1)
-			{
-				pos.y -= 0.5f * dt;
-			}
-			else if (i == 2)
-			{
-				pos.x += 0.5f * dt;
-				pos.y -= 0.5f * dt;
-			}
-			m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
+		//	// Showcase
+		//	if (i == 0)
+		//	{
+		//		pos.x += 0.5f * dt;
+		//	}
+		//	else if (i == 1)
+		//	{
+		//		pos.y -= 0.5f * dt;
+		//	}
+		//	else if (i == 2)
+		//	{
+		//		pos.x += 0.5f * dt;
+		//		pos.y -= 0.5f * dt;
+		//	}
+		//	m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
+		//}
+
+
+		Math::Vector3f moveDirection = Math::Vector3f(0.f, 0.f, 0.f);
+		if (isKeyPressed(moveForewardKey_)) {
+
+			moveDirection = moveDirection + Math::Vector3f(1.f, 0.f, 0.f);
 		}
+		else if (isKeyPressed(moveBackwardKey_)) {
+
+			moveDirection = moveDirection + Math::Vector3f(-1.f, 0.f, 0.f);
+		}
+		else if (isKeyPressed(moveLeftKey_)) {
+
+			moveDirection = moveDirection + Math::Vector3f(0.f, 0.f, -1.f);
+		}
+		else if (isKeyPressed(moveRighKey_)) {
+
+			moveDirection = moveDirection + Math::Vector3f(0.f, 0.f, 1.f);
+		}
+
+		Core::g_MainCamera->SetPosition(Core::g_MainCamera->GetPosition() + moveDirection * dt);
 	}
 }
