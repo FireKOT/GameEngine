@@ -9,9 +9,9 @@ namespace GameEngine::Core
 		{"up", KeyboardButton::UP},
 		{"down", KeyboardButton::DOWN},
 		{"a", KeyboardButton::A},
+		{"d", KeyboardButton::D},
 		{"w", KeyboardButton::W},
 		{"s", KeyboardButton::S},
-		{"d", KeyboardButton::D}
 	};
 
 	KeyboardButton StringToKeyboardButton(const std::string& key)
