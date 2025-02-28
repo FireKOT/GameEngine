@@ -18,6 +18,7 @@ namespace GameEngine
 			Math::Vector3f GetPosition() const { return m_Position; }
 			void SetPosition(Math::Vector3f position) { m_Position = position; }
 			Math::Vector3f GetViewDir() const { return m_ViewDir; }
+			Math::Vector3f GetRightDir() const { return -m_ViewDir.CrossProduct(Math::Vector3f(0.0f, 1.0f, 0.0f)).Normalized(); }
 			void SetViewDir(Math::Vector3f viewDir) { m_ViewDir = viewDir; }
 			void Rotate(float yaw, float pitch);
 

@@ -30,7 +30,7 @@ namespace GameEngine
 		std::unique_ptr<Render::RenderThread> m_renderThread;
 		std::vector<GameObject*> m_Objects;
 
-		int moveForewardKey_ = 0, moveBackwardKey_ = 0, moveLeftKey_ = 0, moveRighKey_ = 0;
+		int moveForewardKey_ = 0, moveBackwardKey_ = 0, moveRighKey_ = 0, moveLeftKey_ = 0;
 
 		float velocity_ = 1.f;
 	};
