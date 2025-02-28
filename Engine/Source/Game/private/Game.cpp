@@ -63,6 +63,7 @@ namespace GameEngine
 			float dt = m_GameTimer.GetDeltaTime();
 
 			Update(dt);
+			UpdateCamera(dt);
 			
 			// The most common idea for such a loop is that it returns false when quit is required, or true otherwise
 			quit = !PlatformLoop();
@@ -93,7 +94,9 @@ namespace GameEngine
 			}
 			m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
 		}
+	}
 
+	void Game::UpdateCamera(float dt) {
 
 		float forewardSpeed = 0.f, rightSpeed = 0.f;
 		if (isKeyPressed(moveForewardKey_)) {
