@@ -2,10 +2,13 @@
 #include <ecsControl.h>
 #include <ECS/ecsSystems.h>
 #include <ecsPhys.h>
+#include <ecsMesh.h>
 #include <flecs.h>
 #include <Input/Controller.h>
 #include <Input/InputHandler.h>
 #include <Vector.h>
+#include <DefaultGeometry.h>
+#include <RenderObject.h>
 
 using namespace GameEngine;
 
@@ -47,5 +50,40 @@ void RegisterEcsControlSystems(flecs::world& world)
 			}
 		}
 	});
+
+
+	world.system<CameraPtr, const ControllerPtr, Shooter>()
+		.each([&](CameraPtr &camPtr, const ControllerPtr &controlPtr, Shooter &shooter) {
+
+			if (controlPtr.ptr->IsPressed("Shoot")) {
+
+				if (shooter.isReadyToShoot()) {
+
+					shooter.shoot();
+
+					world.entity()
+						.set(Position{ camPtr.ptr->GetPosition() + camPtr.ptr->GetViewDir() * 2.f })
+						.set(Velocity{ camPtr.ptr->GetViewDir() * 70.f })
+						.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
+						.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
+						.set(Bounciness{ 0.5f })
+						.set(DeleteAfterFall{ 5.f })
+						.set(GeometryPtr{ RenderCore::DefaultGeometry::d20() })
+						.set(RenderObjectPtr{ new Render::RenderObject() })
+						.set(RigidSphereBody{ 1.f })
+						.add<Bullet>();
+				}
+			}
+		});
+
+
+	world.system<DeleteAfterFall>()
+		.each([&](flecs::entity e, DeleteAfterFall &deleter) {
+
+			if (deleter.wannaDie) {
+
+				ecs_delete(world, e);
+			}
+		});
 }
 

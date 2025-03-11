@@ -1,5 +1,7 @@
 #include <ecsPhys.h>
 #include <flecs.h>
+#include <ecsControl.h>
+#include <ecsMesh.h>
 
 namespace
 {
@@ -25,6 +27,38 @@ void RegisterEcsPhysSystems(flecs::world& world)
 		vel.value.x += grav.value.x * world.delta_time();
 		vel.value.y += grav.value.y * world.delta_time();
 		vel.value.z += grav.value.z * world.delta_time();
+	});
+
+
+	world.system<DeleteAfterFall, const BouncePlane, const Position, Bullet>()
+		.each([&](DeleteAfterFall &deleter, const BouncePlane& plane, const Position& pos, Bullet bullet) {
+
+		float dotPos = plane.value.x * pos.value.x + plane.value.y * pos.value.y + plane.value.z * pos.value.z;
+		if (dotPos < plane.value.w) {
+
+			deleter.isFalled = true;
+		}
+	});
+
+
+	world.system<Position, const RigidSphereBody, Bullet>()
+		.each([&](Position& posBullet, const RigidSphereBody& rigBullet, Bullet bullet) {
+
+		world.each<Position>([&](flecs::entity e, Position& posObstacle) {
+
+			if (!e.has<Obstacle>()) return;
+
+			float distance = (posObstacle.value - posBullet.value).GetLength();			//why I cant call query inside system
+			if (distance < 2) {		//shitty hardcode
+
+				e.destruct();
+
+				world.each<Shooter>([&](flecs::entity e, Shooter& shooter) {
+
+					shooter.curMagSize_ = std::min(static_cast<uint16_t>(shooter.curMagSize_ + 1), shooter.maxMagSize);
+				});
+			}
+		});
 	});
 
 

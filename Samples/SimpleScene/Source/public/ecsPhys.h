@@ -38,6 +38,11 @@ struct FrictionAmount
 	float value;
 };
 
+struct RigidSphereBody {
+
+	float radius;
+};
+
 using Speed = float;
 
 void RegisterEcsPhysSystems(flecs::world& world);

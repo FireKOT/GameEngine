@@ -15,7 +15,23 @@ void GameFramework::Init()
 	RegisterEcsControlSystems(m_World);
 	RegisterEcsPhysSystems(m_World);
 
-	flecs::entity cubeControl = m_World.entity()
+
+
+	for (size_t x = 0; x < 10; ++x) {
+
+		for (size_t y = 0; y < 10; ++y) {
+
+			m_World.entity()
+				.set(Position{ Math::Vector3f(x * 4.f, y * 4.f, 0.f) })
+				.set(GeometryPtr{ RenderCore::DefaultGeometry::d20() })
+				.set(RenderObjectPtr{ new Render::RenderObject() })
+				.set(RigidSphereBody{ 1.f })
+				.add<Obstacle>();
+		}
+	}
+
+
+	/*flecs::entity cubeControl = m_World.entity()
 		.set(Position{ Math::Vector3f(-2.f, 0.f, 0.f) })
 		.set(Velocity{ Math::Vector3f(0.f, 0.f, 0.f) })
 		.set(Speed{ 10.f })
@@ -24,7 +40,7 @@ void GameFramework::Init()
 		.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
 		.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
 		.set(Bounciness{ 0.3f })
-		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(GeometryPtr{ RenderCore::DefaultGeometry::d20() })
 		.set(RenderObjectPtr{ new Render::RenderObject() })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 
@@ -34,17 +50,30 @@ void GameFramework::Init()
 		.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
 		.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
 		.set(Bounciness{ 1.f })
-		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
-		.set(RenderObjectPtr{ new Render::RenderObject() });
+		.set(GeometryPtr{ RenderCore::DefaultGeometry::d20() })
+		.set(RenderObjectPtr{ new Render::RenderObject() })
+		.set(RigidSphereBody {1.f} )
+	    .add<Obstacle>();*/
 
 	flecs::entity camera = m_World.entity()
 		.set(Position{ Math::Vector3f(0.0f, 12.0f, -10.0f) })
 		.set(Speed{ 10.f })
 		.set(CameraPtr{ Core::g_MainCamera })
-		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
+		.set(Shooter{ 0.3f, 3.f, 3 });
 }
 
-void GameFramework::Update(float dt)
-{
+void GameFramework::Update(float dt) {
 
+	m_World.query<Shooter>()
+		.each([&](Shooter& shooter) {
+
+		shooter.update(dt);
+	});
+
+	m_World.query<DeleteAfterFall>()
+		.each([&](DeleteAfterFall& deleter) {
+
+		deleter.update(dt);
+	});
 }
