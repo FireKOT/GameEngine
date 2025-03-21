@@ -31,7 +31,14 @@ void GameFramework::Init()
 		.set(Bounciness{ 0.3f })
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
-		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
+		.set(Collider{ 1.f });
+
+	flecs::entity bulletTest = m_World.entity()
+		.set(Position{ -2.f, 8.f, 0.f })
+		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+		.set(Collider{ 1.f });
 
 	flecs::entity cubeMoving = m_World.entity()
 		.set(Position{ 2.f, 0.f, 0.f })
@@ -40,7 +47,8 @@ void GameFramework::Init()
 		.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
 		.set(Bounciness{ 1.f })
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
-		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+		.set(DestructAfter{ 3.f, 0.f });
 
 	flecs::entity camera = m_World.entity()
 		.set(Position{ 0.0f, 12.0f, -10.0f })
@@ -60,6 +68,11 @@ void GameFramework::RegisterComponents()
 	ECS_META_COMPONENT(m_World, ShiverAmount);
 	ECS_META_COMPONENT(m_World, FrictionAmount);
 	ECS_META_COMPONENT(m_World, Speed);
+
+	ECS_META_COMPONENT(m_World, DestructAfter);
+	ECS_META_COMPONENT(m_World, Collider);
+	ECS_META_COMPONENT(m_World, Obstacle);
+	ECS_META_COMPONENT(m_World, Bullet);
 }
 
 void GameFramework::RegisterSystems()

@@ -58,3 +58,26 @@ ECS_STRUCT(Speed,
 	float value;
 });
 
+
+
+ECS_STRUCT(DestructAfter,
+{
+	float destructAfter;
+	float elapsed;
+});
+
+ECS_STRUCT(Collider,
+{
+	float radius;
+});
+
+ECS_STRUCT(Obstacle,
+{
+	char phony;
+});
+
+ECS_STRUCT(Bullet,
+{
+	char phony;
+});
+

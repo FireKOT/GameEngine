@@ -60,9 +60,66 @@ local function BounceSystem(it)
     end
 end
 
+
+local function destructAfterSystem(it)
+
+    for destructionTimer, ent in ecs.each(it) do
+
+        destructionTimer.elapsed = destructionTimer.elapsed + it.delta_time
+		if destructionTimer.elapsed > destructionTimer.destructAfter then
+			
+			ecs.delete(ent)
+		end
+    end
+end
+
+
+local function collideSystem(it)
+
+	--[[local objects = {}
+    for pos, coll, ent in ecs.each(it) do
+        table.insert(objects, { position = pos, collider = coll, entity = ent })
+    end]]
+
+    for posBullet, colBullet, entBullet in ecs.each(it) do
+
+        for posObstacle, colObstacle, entObstacle in ecs.each(it) do 
+
+			if entBullet ~= entObstacle then
+			
+				local lenX2 = (posBullet.x - posObstacle.x) * (posBullet.x - posObstacle.x);
+				local lenY2 = (posBullet.y - posObstacle.y) * (posBullet.y - posObstacle.y);
+				local lenZ2 = (posBullet.z - posObstacle.z) * (posBullet.z - posObstacle.z);
+				local lenR2 = (colBullet.radius + colObstacle.radius) * (colBullet.radius + colObstacle.radius)
+				if lenX2 + lenY2 + lenZ2 < lenR2 then
+				
+					--ecs.delete(entObstacle)
+					posObstacle.x = 2.0
+					posBullet.x = 2.0
+				end
+			end
+		end
+    end
+
+	--[[for i = 1, #objects do
+		
+		for j = i + 1, #objects do
+
+			local obj1 = objects[i]
+			local obj2 = objects[j]
+			obj1.position.x = 2
+			obj2.position.x = 2
+		end
+	end]]
+end
+
+
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
+ecs.system(destructAfterSystem, "destructAfterSystem", ecs.OnUpdate, "DestructAfter")
+ecs.system(collideSystem, "collideSystem", ecs.OnUpdate, "Position, Collider")
 
