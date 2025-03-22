@@ -32,13 +32,36 @@ void GameFramework::Init()
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
-		.set(Collider{ 1.f });
+		.set(Collider{ 1.f })
+		.set(Bullet{ 0 });
 
-	flecs::entity bulletTest = m_World.entity()
+	flecs::entity obj1 = m_World.entity()
 		.set(Position{ -2.f, 8.f, 0.f })
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
-		.set(Collider{ 1.f });
+		.set(Collider{ 1.f })
+		.set(Obstacle{ 0 });
+
+	flecs::entity obj2 = m_World.entity()
+		.set(Position{ -2.f, 12.f, 0.f })
+		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+		.set(Collider{ 1.f })
+		.set(Obstacle{ 0 });
+
+	flecs::entity obj3 = m_World.entity()
+		.set(Position{ 2.f, 8.f, 0.f })
+		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+		.set(Collider{ 1.f })
+		.set(Obstacle{ 0 });
+
+	flecs::entity obj4 = m_World.entity()
+		.set(Position{ 2.f, 12.f, 0.f })
+		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+		.set(Collider{ 1.f })
+		.set(Obstacle{ 0 });
 
 	flecs::entity cubeMoving = m_World.entity()
 		.set(Position{ 2.f, 0.f, 0.f })

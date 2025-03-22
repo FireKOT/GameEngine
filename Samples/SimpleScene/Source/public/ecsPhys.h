@@ -81,3 +81,8 @@ ECS_STRUCT(Bullet,
 	char phony;
 });
 
+ECS_STRUCT(ObjectType,
+{
+	int type;
+});
+

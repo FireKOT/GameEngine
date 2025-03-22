@@ -6,6 +6,9 @@
 #include <Input/Controller.h>
 #include <Input/InputHandler.h>
 #include <Vector.h>
+#include <DefaultGeometry.h>
+#include <RenderObject.h>
+
 
 using namespace GameEngine;
 
@@ -47,6 +50,29 @@ void RegisterEcsControlSystems(flecs::world& world)
 			{
 				vel.y = jump.value;
 			}
+		}
+	});
+
+
+	world.system<CameraPtr, const ControllerPtr>()
+		.each([&](CameraPtr& camPtr, const ControllerPtr& controlPtr) {
+
+		if (controlPtr.ptr->IsPressed("Shoot")) {
+
+			Math::Vector3f pos = camPtr.ptr->GetPosition() + camPtr.ptr->GetViewDir() * 2.f;
+			Math::Vector3f vel = camPtr.ptr->GetViewDir() * 70.f;
+
+			world.entity()
+				.set(Position{ pos.x, pos.y, pos.z })
+				.set(Velocity{ vel.x, vel.y, vel.z })
+				.set(Gravity{ 0.f, -9.8065f, 0.f })
+				.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
+				.set(Bounciness{ 0.5f })
+				.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+				.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+				.set(DestructAfter{ 3.f, 0.f })
+				.set(Collider{ 1.f })
+				.set(Bullet{ 0 });
 		}
 	});
 }
