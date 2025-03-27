@@ -71,6 +71,21 @@ void GameFramework::RegisterComponentsReflection()
 
 	m_World.component<JumpSpeed>()
 		.member<float>("value");
+
+
+	m_World.component<DestructAfter>()
+		.member<float>("destructAfter")
+		.member<float>("elapsed");
+
+	m_World.component<Collider>()
+		.member<float>("radius");
+
+	m_World.component<Bullet>()
+		.member<char>("phony");
+
+	m_World.component<Obstacle>()
+		.member<char>("phony");
+
 }
 
 void GameFramework::RegisterSystems()

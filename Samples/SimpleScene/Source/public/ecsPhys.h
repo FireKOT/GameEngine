@@ -51,3 +51,24 @@ struct Speed
 	float value;
 };
 
+
+struct DestructAfter {
+
+	float destructAfter;
+	float elapsed;
+};
+
+struct Collider {
+
+	float radius;
+};
+
+struct Bullet {
+
+	char phony;
+};
+
+struct Obstacle {
+
+	char phony;
+};

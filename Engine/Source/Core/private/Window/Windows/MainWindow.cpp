@@ -47,6 +47,10 @@ namespace GameEngine::Core
 			InputHandler::GetInstance()->OnMouseMove(pt.x - pos.x, pt.y - pos.y);
 			return 0;
 		case WM_LBUTTONDOWN:
+			if (g_MainWindowsApplication->IsFocused()) [[likely]]
+			{
+				InputHandler::GetInstance()->KeyReleased(MouseButton::LMB);
+			}
 		case WM_RBUTTONDOWN:
 		case WM_MBUTTONDOWN:
 			if (g_MainWindowsApplication->IsFocused()) [[likely]]

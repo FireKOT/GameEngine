@@ -60,9 +60,62 @@ local function BounceSystem(it)
     end
 end
 
+
+local function destructAfterSystem(it)
+
+    for destructionTimer, ent in ecs.each(it) do
+
+        destructionTimer.elapsed = destructionTimer.elapsed + it.delta_time
+		if destructionTimer.elapsed > destructionTimer.destructAfter then
+			
+			ecs.delete(ent)
+		end
+    end
+end
+
+
+local bullets = {}
+
+
+local function bulletFinderSystem(it)
+
+    for pos, coll, bullet, ent in ecs.each(it) do
+
+        table.insert(bullets, { position = pos, collider = coll, entity = ent })
+    end
+end
+
+
+local function collideSystem(it)
+
+	for pos, coll, obstacle, ent in ecs.each(it) do
+
+        for i = #bullets, 1, -1 do
+
+			local posBullet = bullets[i].position
+			local collBullet = bullets[i].collider
+
+			local lenX2 = (posBullet.x - pos.x) * (posBullet.x - pos.x);
+			local lenY2 = (posBullet.y - pos.y) * (posBullet.y - pos.y);
+			local lenZ2 = (posBullet.z - pos.z) * (posBullet.z - pos.z);
+			local lenR2 = (collBullet.radius + coll.radius) * (collBullet.radius + coll.radius)
+
+			if lenX2 + lenY2 + lenZ2 < lenR2 then
+				
+				ecs.delete(ent)
+			end
+		end
+    end
+
+end
+
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
+ecs.system(destructAfterSystem, "destructAfterSystem", ecs.OnUpdate, "DestructAfter")
+ecs.system(bulletFinderSystem, "bulletFinderSystem", ecs.OnUpdate, "Position, Collider, Bullet")
+ecs.system(collideSystem, "collideSystem", ecs.OnUpdate, "Position, Collider, Obstacle")
 
