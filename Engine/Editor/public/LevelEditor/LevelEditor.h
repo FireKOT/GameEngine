@@ -23,7 +23,12 @@ namespace GameEngine
 		private:
 			void Save();
 
+			void spawnECSEntity ();
+
 		private:
+
+			flecs::world& world_;
+
 			Core::Timer m_SaveButtonMessageTimer;
 			bool m_SaveButtonPressed = false;
 			float m_TimeToShowSaveButtonMessage = 3.f;
