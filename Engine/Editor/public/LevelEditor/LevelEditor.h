@@ -23,7 +23,7 @@ namespace GameEngine
 		private:
 			void Save();
 
-			void spawnECSEntity ();
+			void spawnECSEntity (uint64_t id);
 
 		private:
 

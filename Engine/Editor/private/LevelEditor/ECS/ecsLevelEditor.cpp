@@ -1,28 +1,42 @@
 #include <LevelEditor/ECS/ecsLevelEditor.h>
+#include <LevelEditor/LevelEditor.h>
 
 namespace
 {
+	using namespace GameEngine;
+
 	void ParsePosition(
-		const GameEngine::EntitySystem::LevelEditorECS::PositionDesc& positionDesc,
-		GameEngine::EntitySystem::EditorECS::Position& position
+		const EntitySystem::LevelEditorECS::PositionDesc& positionDesc,
+		EntitySystem::EditorECS::Position& position
 	)
 	{
-		assert(positionDesc.value);
-		assert(std::ranges::count(*positionDesc.value, ',') == 2);
+		const World::LevelObject& levelObject = positionDesc.objects->at(positionDesc.id);
 
-		const char* compValue = positionDesc.value->c_str();
-		char* end;
+		const World::LevelObject::ComponentList& componentList = levelObject.GetComponents();
 
-		float f = std::strtof(compValue, &end);
-		position.x = f;
-		compValue = end + 1;
+		World::LevelObject::ComponentList::const_iterator positionAttribute = std::ranges::find_if(componentList,
+			[](const World::LevelObject::Component& component)
+			{
+				return !std::strcmp(component.first.c_str(), "Position");
+			}
+		);
 
-		f = std::strtof(compValue, &end);
-		position.y = f;
-		compValue = end + 1;
+		if (positionAttribute != componentList.end())
+		{
+			const char* compValue = positionAttribute->second.c_str();
+			char* end;
 
-		f = std::strtof(compValue, &end);
-		position.z = f;
+			float f = std::strtof(compValue, &end);
+			position.x = f;
+			compValue = end + 1;
+
+			f = std::strtof(compValue, &end);
+			position.y = f;
+			compValue = end + 1;
+
+			f = std::strtof(compValue, &end);
+			position.z = f;
+		}
 	}
 }
 
@@ -30,8 +44,8 @@ namespace GameEngine::EntitySystem::LevelEditorECS
 {
 	void RegisterLevelEditorEcsSystems(flecs::world& world)
 	{
-		world.system<const PositionDesc, EntitySystem::EditorECS::Position>()
-			.each([&](const PositionDesc& positionDesc, EntitySystem::EditorECS::Position& position)
+		world.system<PositionDesc, EntitySystem::EditorECS::Position>()
+			.each([&](PositionDesc& positionDesc, EntitySystem::EditorECS::Position& position)
 				{
 					ParsePosition(positionDesc, position);
 				});
